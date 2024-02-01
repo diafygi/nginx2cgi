@@ -12,7 +12,7 @@ This project is a small Perl script you can include in your nginx config to enab
 
 ```
 location /mycgi {
-    set $cgi_script "/path/to/cgi-bin/myscript.cgi
+    set $cgi_script "/path/to/cgi-bin/myscript.cgi";
     set $cgi_headers "Host Content-Length Content-Type Cookie Authorization";
     include "/path/to/cgi.nginx.conf";
 }
