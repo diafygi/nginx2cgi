@@ -24,3 +24,27 @@ The included config is a small Perl script that converts the incoming request in
 
 NOTE: The Perl script uses `open2` to call the `$cgi_script ` for every request, which means this briefly forks and creates a new subprocess for every request. So this project is not nearly as efficient as running a dedicated FastCGI server. I made this project primarily for low volume dynamic websites where I didn't want to have to run an additional server besides nginx.
 
+## Example: Run a Python wsgi app via CGI
+
+`/path/to/myapp.py`:
+```
+def app(environ, start_response):
+    resp_body = b"Hello World!"
+    start_response("200 OK", [
+        ('Content-Type', "text/plain"),
+        ('Content-Length', str(len(resp_body))),
+    ])
+    return [resp_body]
+```
+
+`/etc/nginx/sites-enabled/mydemo.conf`:
+```
+server {
+    listen 8000;
+
+    location / {
+        set $cgi_script "cd /path/to/ && python3 -c 'import myapp, wsgiref.handlers; wsgiref.handlers.CGIHandler().run(myapp.app)'";
+        include "/path/to/cgi.nginx.conf";
+    }
+}
+```
